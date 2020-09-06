@@ -49,15 +49,20 @@ vector<String> getParsedCommand(String data) {
       count++;
     }
 
-    const size_t count2 = count;
-
     vector<String> ret;
-    
-    for (size_t i = 0; i < count; i++)
-    {
-      ret.push_back(getArguments(data,i));
+
+    if(count > 1) {
+      //const size_t count2 = count;
+      
+      for (size_t i = 0; i < count; i++)
+      {
+        ret.push_back(getArguments(data,i));
+      }
+      
+      return ret;
+    } else {
+      ret.push_back(data);
+      return ret;
     }
-    
-    return ret;
 };
 //=======================================================================

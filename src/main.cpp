@@ -60,8 +60,9 @@ void loop()
           DEBUG_MSG_LN("websocket listenning");
 
           if(first) {
-            Serial.println("ready");
+            Serial.println("status|ready");
             first = false;
+            webSocketClient.sendData("sendMac|"+WiFi.macAddress());
           }
 
           String data;
@@ -74,7 +75,15 @@ void loop()
           
           if(Serial.available()) {
             DEBUG_MSG_LN("Sending data");
-            webSocketClient.sendData(Serial.readString());
+            String data = Serial.readString();
+            std::vector<String> command = getParsedCommand(data);
+            if(command[0] == "getMac\r\n") {
+              if(command.size() == 1) {
+                Serial.println("res|"+WiFi.macAddress());
+              }
+            } else {
+              webSocketClient.sendData(data);
+            }
           }
 
         } else {
@@ -85,7 +94,7 @@ void loop()
             } else {
               DEBUG_MSG_LN("Connection failed.");
 
-              Serial.println("lost");
+              Serial.println("status|lost");
               first = true;
               
             }
