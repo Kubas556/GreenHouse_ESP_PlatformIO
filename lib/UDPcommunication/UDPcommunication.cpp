@@ -168,7 +168,7 @@ char *UDPcommunication::listenForHub()
       a.toCharArray(b, a.length() + 1);
       udp->write(b, a.length()); //Send one byte
       udp->endPacket();
-      delay(100);
+      delay(500);
     }
     else
     {

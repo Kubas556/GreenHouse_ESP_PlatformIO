@@ -90,7 +90,7 @@ bool WebSocketClient::analyzeRequest() {
 
     while (socket_client->connected() && !socket_client->available()) {
         delay(100);
-        Serial.println("Waiting...");
+        //Serial.println("Waiting...");
     }
 
     // TODO: More robust string extraction
