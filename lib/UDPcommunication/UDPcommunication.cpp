@@ -27,7 +27,7 @@ UDPcommunication::UDPcommunication()
 
 void UDPcommunication::connect(String ssid, String pass)
 {
-  WiFi.mode(WIFI_AP_STA);
+  //WiFi.mode(WIFI_AP_STA);
   int len1 = ssid.length();
   int len2 = pass.length();
   // declaring character array
@@ -48,7 +48,7 @@ void UDPcommunication::connect(String ssid, String pass)
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    DEBUG_MSG("waiting to connect ot wifi");
+    DEBUG_MSG_LN("waiting to connect to wifi");
     if (authFailed())
       break;
   }
@@ -56,9 +56,9 @@ void UDPcommunication::connect(String ssid, String pass)
   if (authSuccess())
   {
     DEBUG_MSG("Connected to: ");
-    DEBUG_MSG(_ssid);
+    DEBUG_MSG_LN(_ssid);
     DEBUG_MSG("IP address: ");
-    DEBUG_MSG(WiFi.localIP().toString().c_str());
+    DEBUG_MSG_LN(WiFi.localIP().toString().c_str());
   }
 
   //Start UDP
@@ -121,34 +121,34 @@ char *UDPcommunication::listenForCredentials()
     if (!APRunning)
     {
       // WiFi.mode(WIFI_AP);
-      DEBUG_MSG("Setting soft-AP configuration ... ");
-      DEBUG_MSG(WiFi.softAPConfig(serverIP, gatewayIP, subnetIP) ? "Ready" : "Failed!");
+      DEBUG_MSG_LN("Setting soft-AP configuration ... ");
+      DEBUG_MSG_LN(WiFi.softAPConfig(serverIP, gatewayIP, subnetIP) ? "Ready" : "Failed!");
 
-      DEBUG_MSG("Setting soft-AP ... ");
+      DEBUG_MSG_LN("Setting soft-AP ... ");
       bool result = WiFi.softAP("GreenHouse_setup_WiFi");
-      DEBUG_MSG(result ? "Ready" : "Failed!");
+      DEBUG_MSG_LN(result ? "Ready" : "Failed!");
 
-      DEBUG_MSG("Soft-AP IP address: ");
-      DEBUG_MSG(WiFi.softAPIP().toString().c_str());
-      APRunning = result;
+      DEBUG_MSG_LN("Soft-AP IP address: ");
+      DEBUG_MSG_LN(WiFi.softAPIP().toString().c_str());
+      APRunning = true;
       delay(1000);
     }
 
     if (WiFi.softAPgetStationNum() != 0)
     {
 
-      DEBUG_MSG("Starting UDP");
+      DEBUG_MSG_LN("Starting UDP");
       udp->begin(_localPort);
       UDPRunning = true;
-      DEBUG_MSG("Local port: ");
-      DEBUG_MSG(String(udp->localPort()).c_str());
-      DEBUG_MSG("Listenning for credentials packet");
+      DEBUG_MSG_LN("Local port: ");
+      DEBUG_MSG_LN(String(udp->localPort()).c_str());
+      DEBUG_MSG_LN("Listenning for credentials packet");
       delay(1000);
     }
     else
     {
       delay(1000);
-      DEBUG_MSG("Wait for clien");
+      DEBUG_MSG_LN("Wait for clien");
     }
 
     return NULL;
@@ -195,12 +195,12 @@ char *UDPcommunication::listenForHub()
   }
   else
   {
-    DEBUG_MSG("Starting UDP");
+    DEBUG_MSG_LN("Starting UDP");
     udp->begin(_publicPort);
-    DEBUG_MSG("Local port: ");
-    DEBUG_MSG(String(udp->localPort()).c_str());
-    DEBUG_MSG("Address: ");
-    DEBUG_MSG(WiFi.localIP().toString().c_str());
+    DEBUG_MSG_LN("Local port: ");
+    DEBUG_MSG_LN(String(udp->localPort()).c_str());
+    DEBUG_MSG_LN("Address: ");
+    DEBUG_MSG_LN(WiFi.localIP().toString().c_str());
     UDPRunning = true;
     return NULL;
   }
