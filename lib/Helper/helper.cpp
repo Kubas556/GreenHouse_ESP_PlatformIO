@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "helper.h"
-#include "WebSocketClient.h";
+
 using std::vector;
 //======================================================================
 // HELPING FUNCTIONS

@@ -13,7 +13,7 @@
   #include "WProgram.h"
 #endif
 
-#define DEBUG_ESP_PORT Serial
+//#define DEBUG_ESP_PORT Serial
 
 #ifdef DEBUG_ESP_PORT
 #define DEBUG_MSG(...) DEBUG_ESP_PORT.printf( __VA_ARGS__ )

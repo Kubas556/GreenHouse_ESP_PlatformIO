@@ -4,11 +4,13 @@
 #include <WiFiUdp.h>*/
 
 
-#define DEBUG_ESP_PORT Serial
+//#define DEBUG_ESP_PORT Serial
 
 
 #include <Arduino.h>
 #include "UDPcommunication.h"
+#include <string.h>
+#include <cstring>
 #include "helper.h"
 
 
@@ -65,25 +67,31 @@ void WiFiSetup() {
 
 void connectOrReconnectWebsocket() {
   if(!client.connected()) {
-    if (client.connect(UDPgreenhouse->hubIP.toString(), 3000)) {
+    if (client.connect(UDPgreenhouse->hubIP.toString(), 3300)) {
       DEBUG_MSG_LN("Connected");
       WebSocketConnected = false;
     } else {
       DEBUG_MSG("Connection failed");
     }
   } else {
-    webSocketClient.path = "/";
-    String ip = UDPgreenhouse->hubIP.toString().c_str(); //https://stackoverflow.com/questions/7352099/stdstring-to-char
+    std::string ip = UDPgreenhouse->hubIP.toString().c_str(); //https://stackoverflow.com/questions/7352099/stdstring-to-char
+    /*std::string path = ("ws://"+ip+"/");
+    char* copyPath = new char[path.size()+1];
+    strcpy(copyPath,path.c_str());*/
     char *copyIP = new char[ip.length() + 1];
     strcpy(copyIP, ip.c_str());
+    webSocketClient.path = /*copyPath*/"/";
     webSocketClient.host = copyIP;
-    delete [] copyIP;
+
     if (webSocketClient.handshake(client)) {
         DEBUG_MSG_LN("Handshake successful");
         WebSocketConnected = true;
       } else {
         DEBUG_MSG_LN("Handshake failed.");
       }
+
+      //delete [] copyPath;
+      delete [] copyIP;
   }
 }
 
