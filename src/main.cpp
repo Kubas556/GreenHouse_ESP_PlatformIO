@@ -4,7 +4,6 @@
 #include <WiFiUdp.h>*/
 
 
-//#define DEBUG_ESP_PORT Serial
 
 
 #include <Arduino.h>
@@ -40,6 +39,8 @@ void listenForSerialCommands() {
             if(command.size() == 1) {
               Serial.println("res|"+status);
             }
+          } else if(command[0] == "disconnectWiFi\r") { 
+            WiFi.disconnect();
           } else {
             if(WebSocketConnected)
             webSocketClient.sendData(data);
@@ -52,26 +53,26 @@ bool clientAlreadyConnected = false;
 void WiFiSetup() {
   needSetup = true;
   char* credentials = UDPgreenhouse->listenForCredentials();
-  DEBUG_MSG_LN(credentials);
   if(credentials){
     if(String(subStr(credentials,"|",1))=="WiFi-login"){
       String name = String(subStr(credentials,"|",2));
       String password = String(subStr(credentials,"|",3));
-      //DEBUG_MSG(name+" "+password);
+      //DEBUG_MSG_LN(name+" "+password);
       DEBUG_MSG_LN("recived login credentials");
       UDPgreenhouse->connect(name,password);
     }
-    delete credentials;
   }
+
+  delete credentials;
 }
 
 void connectOrReconnectWebsocket() {
   if(!client.connected()) {
     if (client.connect(UDPgreenhouse->hubIP.toString(), 3300)) {
-      DEBUG_MSG_LN("Connected");
+      DEBUG_MSG_LN("Connected to websocket");
       WebSocketConnected = false;
     } else {
-      DEBUG_MSG("Connection failed");
+      DEBUG_MSG("Connection with websocket failed");
     }
   } else {
     std::string ip = UDPgreenhouse->hubIP.toString().c_str(); //https://stackoverflow.com/questions/7352099/stdstring-to-char
@@ -84,10 +85,10 @@ void connectOrReconnectWebsocket() {
     webSocketClient.host = copyIP;
 
     if (webSocketClient.handshake(client)) {
-        DEBUG_MSG_LN("Handshake successful");
+        DEBUG_MSG_LN("Hub handshake successful");
         WebSocketConnected = true;
       } else {
-        DEBUG_MSG_LN("Handshake failed.");
+        DEBUG_MSG_LN("Hub handshake failed.");
       }
 
       //delete [] copyPath;
@@ -187,7 +188,7 @@ void loop()
       DEBUG_MSG_LN(WiFi.SSID());
       WiFi.disconnect();
     }else if(UDPgreenhouse->changingStatus()){
-      DEBUG_MSG_LN("changing status");
+      //DEBUG_MSG_LN("changing status");
     } else if(UDPgreenhouse->disconnected()) {
       DEBUG_MSG_LN("disconnected");
     }

@@ -11,14 +11,15 @@ IPAddress hubIP(192,168,88,255); //UDP Broadcast IP data sent to all devicess on
 
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP udp;*/
+
 UDPcommunication::UDPcommunication()
 {
   IPAddress brodcast(255, 255, 255, 255);
   brodcastIP = brodcast;
   //hubIP = brodcastIp;
-  IPAddress espIP(192, 168, 0, 2);
+  IPAddress espIP(192, 168, 4, 2);
   serverIP = espIP;
-  IPAddress gateway(192, 168, 0, 1);
+  IPAddress gateway(192, 168, 4, 1);
   gatewayIP = gateway;
   IPAddress subnet(255, 255, 255, 0);
   subnetIP = subnet;
@@ -106,9 +107,10 @@ char *UDPcommunication::listenForCredentials()
     if (cb)
     {
       int leng = udp->available();
+      //DEBUG_MSG_LN(leng);
       char *packetBuffer = new char[leng];
-      //memset(packetBuffer, 0, sizeof(packetBuffer));
       udp->read(packetBuffer, leng);
+      DEBUG_MSG_LN(packetBuffer);
       return packetBuffer;
     }
     else
@@ -125,7 +127,7 @@ char *UDPcommunication::listenForCredentials()
       DEBUG_MSG_LN(WiFi.softAPConfig(serverIP, gatewayIP, subnetIP) ? "Ready" : "Failed!");
 
       DEBUG_MSG_LN("Setting soft-AP ... ");
-      bool result = WiFi.softAP("GreenHouse_setup_WiFi");
+      bool result = WiFi.softAP("GreenHouse_setup_WiFi","DefaultSetupPassword");
       DEBUG_MSG_LN(result ? "Ready" : "Failed!");
 
       DEBUG_MSG_LN("Soft-AP IP address: ");
