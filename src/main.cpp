@@ -7,13 +7,13 @@
 
 
 #include <Arduino.h>
-#include "UDPcommunication.h"
+#include "WiFicommunication.h"
 #include <string.h>
 #include <cstring>
 #include "helper.h"
 
 
-UDPcommunication* UDPgreenhouse = new UDPcommunication();
+WiFicommunication* UDPgreenhouse = new WiFicommunication();
 
 const char *ssid;
 const char *pass;
@@ -57,6 +57,7 @@ void WiFiSetup() {
     if(String(subStr(credentials,"|",1))=="WiFi-login"){
       String name = String(subStr(credentials,"|",2));
       String password = String(subStr(credentials,"|",3));
+      //password = password.substring(0,password.length()-1);
       //DEBUG_MSG_LN(name+" "+password);
       DEBUG_MSG_LN("recived login credentials");
       UDPgreenhouse->connect(name,password);
@@ -142,8 +143,12 @@ void loop()
         webSocketClient.getData(data);
         if (data.length() > 0) {
           DEBUG_MSG_LN("Received data");
-          //std::vector<String> response = getParsedCommand(data);
-          Serial.println(data);
+          if(data == "disconnectWiFi") {
+            WiFi.disconnect();
+          } else {
+            //std::vector<String> response = getParsedCommand(data);
+            Serial.println(data);
+          }
         }
 
       } else {

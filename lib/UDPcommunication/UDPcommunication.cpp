@@ -1,4 +1,4 @@
-#include "UDPcommunication.h"
+#include "WiFicommunication.h"
 
 /*#include <Wire.h> // Enable this line if using Arduino Uno, Mega, etc.
 
@@ -12,7 +12,7 @@ IPAddress hubIP(192,168,88,255); //UDP Broadcast IP data sent to all devicess on
 // A UDP instance to let us send and receive packets over UDP
 WiFiUDP udp;*/
 
-UDPcommunication::UDPcommunication()
+WiFicommunication::WiFicommunication()
 {
   IPAddress brodcast(255, 255, 255, 255);
   brodcastIP = brodcast;
@@ -26,7 +26,7 @@ UDPcommunication::UDPcommunication()
   udp = new WiFiUDP();
 }
 
-void UDPcommunication::connect(String ssid, String pass)
+void WiFicommunication::connect(String ssid, String pass)
 {
   //WiFi.mode(WIFI_AP_STA);
   int len1 = ssid.length();
@@ -69,27 +69,27 @@ void UDPcommunication::connect(String ssid, String pass)
   Serial.println(udp.localPort());*/
 }
 
-bool UDPcommunication::authSuccess()
+bool WiFicommunication::authSuccess()
 {
   return WiFi.status() == WL_CONNECTED;
 }
 
-bool UDPcommunication::authFailed()
+bool WiFicommunication::authFailed()
 {
   return (WiFi.status() == WL_CONNECT_FAILED) || (WiFi.status() == WL_NO_SSID_AVAIL);
 }
 
-bool UDPcommunication::changingStatus()
+bool WiFicommunication::changingStatus()
 {
   return WiFi.status() == WL_IDLE_STATUS;
 }
 
-bool UDPcommunication::disconnected()
+bool WiFicommunication::disconnected()
 {
   return WiFi.status() == WL_DISCONNECTED;
 }
 
-void UDPcommunication::stopListenForCredentials()
+void WiFicommunication::stopListenForCredentials()
 {
   //WiFi.mode(WIFI_AP_STA);
   udp->stop();
@@ -99,14 +99,14 @@ void UDPcommunication::stopListenForCredentials()
   delay(100);
 }
 
-char *UDPcommunication::listenForCredentials()
+char *WiFicommunication::listenForCredentials()
 {
   if (APRunning && UDPRunning)
   {
     int cb = udp->parsePacket();
     if (cb)
     {
-      int leng = udp->available();
+      int leng = 40; //udp->available();
       //DEBUG_MSG_LN(leng);
       char *packetBuffer = new char[leng];
       udp->read(packetBuffer, leng);
@@ -157,7 +157,7 @@ char *UDPcommunication::listenForCredentials()
   }
 }
 
-char *UDPcommunication::listenForHub()
+char *WiFicommunication::listenForHub()
 {
   if (UDPRunning)
   {
@@ -210,12 +210,12 @@ char *UDPcommunication::listenForHub()
   return NULL;
 }
 
-bool UDPcommunication::haveHub()
+bool WiFicommunication::haveHub()
 {
   return hubIP.isSet();
 }
 
-void UDPcommunication::check()
+void WiFicommunication::check()
 {
   int cb = udp->parsePacket();
   char packetBuffer[9];
